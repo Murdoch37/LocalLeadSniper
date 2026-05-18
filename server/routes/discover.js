@@ -118,7 +118,6 @@ async function overpassQuery(query) {
     method: 'POST',
     headers: {
       'Content-Type': 'application/x-www-form-urlencoded',
-      'Accept': 'application/json',
     },
     body: 'data=' + encodeURIComponent(query),
     timeout: 35000,
