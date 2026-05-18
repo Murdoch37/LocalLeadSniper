@@ -114,12 +114,10 @@ function normaliseWebsite(url) {
 }
 
 async function overpassQuery(query) {
-  const response = await fetch('https://overpass-api.de/api/interpreter', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/x-www-form-urlencoded',
-    },
-    body: 'data=' + encodeURIComponent(query),
+  const url = 'https://overpass-api.de/api/interpreter?data=' + encodeURIComponent(query);
+  const response = await fetch(url, {
+    method: 'GET',
+    headers: { 'User-Agent': 'LocalLeadSniper/1.0' },
     timeout: 35000,
   });
   if (!response.ok) {
