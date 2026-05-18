@@ -20,8 +20,10 @@ const auditRouter = require('./routes/audit');
 const emailRouter = require('./routes/email');
 const mockupRouter = require('./routes/mockup');
 const statsRouter = require('./routes/stats');
+const discoverRouter = require('./routes/discover');
 
 app.use('/api/stats', statsRouter);
+app.use('/api/discover', discoverRouter);
 app.use('/api/leads', leadsRouter);
 app.use('/api/leads/:id/audit', auditRouter);
 app.use('/api/leads/:id/email', emailRouter);

@@ -1,12 +1,14 @@
 import { useState, useEffect, useCallback } from 'react';
 import { Dashboard } from './components/Dashboard';
 import { LeadsView } from './components/LeadsView';
+import { DiscoverView } from './components/DiscoverView';
 import { ToastContainer } from './components/Toast';
 import { useToast } from './hooks/useToast';
-import { LayoutDashboard, Users, Target, Plus } from 'lucide-react';
+import { LayoutDashboard, Users, Target, Plus, Compass } from 'lucide-react';
 
 const NAV = [
   { id: 'dashboard', label: 'Dashboard', icon: LayoutDashboard },
+  { id: 'discover', label: 'Discover', icon: Compass },
   { id: 'leads', label: 'Leads', icon: Users },
 ];
 
@@ -86,6 +88,9 @@ export default function App() {
         <div className="max-w-7xl mx-auto px-6 py-8">
           {page === 'dashboard' && (
             <Dashboard onLeadClick={() => setPage('leads')} />
+          )}
+          {page === 'discover' && (
+            <DiscoverView toast={toast} />
           )}
           {page === 'leads' && (
             <LeadsView
