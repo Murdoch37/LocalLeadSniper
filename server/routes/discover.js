@@ -194,7 +194,7 @@ router.post('/', async (req, res) => {
       let websiteStatus = 'unknown';
       if (!website) websiteStatus = facebook ? 'facebook_only' : 'no_website';
 
-      businesses.push({ business_name: name, suburb: suburb.trim(), industry, website_url: website, phone, email, website_status, facebook });
+      businesses.push({ business_name: name, suburb: suburb.trim(), industry, website_url: website, phone, email, website_status: websiteStatus, facebook });
     }
 
     const order = { no_website: 0, facebook_only: 1, unknown: 2 };
