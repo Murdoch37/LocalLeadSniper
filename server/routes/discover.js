@@ -114,17 +114,29 @@ function normaliseWebsite(url) {
 }
 
 async function overpassQuery(query) {
-  const url = 'https://overpass-api.de/api/interpreter?data=' + encodeURIComponent(query);
-  const response = await fetch(url, {
-    method: 'GET',
+  const params = new URLSearchParams();
+  params.append('data', query);
+
+  const response = await fetch('https://overpass-api.de/api/interpreter', {
+    method: 'POST',
+    body: params,
     headers: { 'User-Agent': 'LocalLeadSniper/1.0' },
     timeout: 35000,
   });
+
+  const text = await response.text();
+
   if (!response.ok) {
-    const text = await response.text().catch(() => '');
-    throw new Error(`Overpass error ${response.status}${text ? ': ' + text.slice(0, 200) : ''}`);
+    throw new Error(`Overpass error ${response.status}: ${text.slice(0, 200)}`);
   }
-  return response.json();
+  if (!text || !text.trim()) {
+    throw new Error('Overpass returned an empty response');
+  }
+  try {
+    return JSON.parse(text);
+  } catch {
+    throw new Error(`Overpass returned non-JSON: ${text.slice(0, 200)}`);
+  }
 }
 
 function buildAreaFilters(categories, suburb) {
