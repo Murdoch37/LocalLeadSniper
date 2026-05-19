@@ -1,6 +1,18 @@
 import { useState } from 'react';
 import { Search, MapPin, Loader, Import, CheckSquare, Square, Globe, Facebook, AlertCircle, Zap, TrendingUp } from 'lucide-react';
 
+const STATES = [
+  { value: '', label: 'Any state' },
+  { value: 'TAS', label: 'TAS' },
+  { value: 'VIC', label: 'VIC' },
+  { value: 'NSW', label: 'NSW' },
+  { value: 'QLD', label: 'QLD' },
+  { value: 'WA', label: 'WA' },
+  { value: 'SA', label: 'SA' },
+  { value: 'ACT', label: 'ACT' },
+  { value: 'NT', label: 'NT' },
+];
+
 const CATEGORIES = [
   { value: 'hospitality', label: 'Hospitality', emoji: '🍽️' },
   { value: 'retail', label: 'Retail', emoji: '🛍️' },
@@ -45,6 +57,7 @@ function ScoreBar({ score }) {
 
 export function DiscoverView({ toast }) {
   const [suburb, setSuburb] = useState('');
+  const [state, setState] = useState('TAS');
   const [categories, setCategories] = useState([]);
   const [results, setResults] = useState(null);
   const [searching, setSearching] = useState(false);
@@ -98,7 +111,7 @@ export function DiscoverView({ toast }) {
       const res = await fetch('/api/discover', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ suburb: suburb.trim(), categories }),
+        body: JSON.stringify({ suburb: suburb.trim(), state: state || undefined, categories }),
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || 'Search failed');
@@ -159,12 +172,21 @@ export function DiscoverView({ toast }) {
             <MapPin size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-zinc-500" />
             <input
               className="w-full bg-zinc-800 border border-zinc-700 rounded-lg pl-9 pr-4 py-2.5 text-sm text-zinc-100 placeholder-zinc-500 focus:outline-none focus:border-indigo-500 transition-colors"
-              placeholder="Suburb name, e.g. Fitzroy, Newtown, Fortitude Valley…"
+              placeholder="Suburb name, e.g. Claremont, Glenorchy, Sandy Bay…"
               value={suburb}
               onChange={e => setSuburb(e.target.value)}
               required
             />
           </div>
+          <select
+            className="bg-zinc-800 border border-zinc-700 rounded-lg px-3 py-2.5 text-sm text-zinc-200 focus:outline-none focus:border-indigo-500 transition-colors"
+            value={state}
+            onChange={e => setState(e.target.value)}
+          >
+            {STATES.map(s => (
+              <option key={s.value} value={s.value}>{s.label}</option>
+            ))}
+          </select>
           <button
             type="submit"
             disabled={searching || !suburb.trim()}

@@ -43,8 +43,9 @@ function normaliseWebsite(url) {
   return /^https?:\/\//i.test(t) ? t : 'https://' + t;
 }
 
-async function geocodeSuburb(suburb) {
-  const url = `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(suburb + ', Australia')}&format=json&limit=3&addressdetails=1`;
+async function geocodeSuburb(suburb, state) {
+  const q = state ? `${suburb}, ${state}, Australia` : `${suburb}, Australia`;
+  const url = `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(q)}&format=json&limit=3&addressdetails=1`;
   console.log('[discover] geocoding:', url);
   const res = await fetch(url, {
     headers: { 'User-Agent': 'LocalLeadSniper/1.0' },
@@ -136,8 +137,8 @@ async function overpassQuery(query) {
 // POST /api/discover
 router.post('/', async (req, res) => {
   try {
-    const { suburb, categories = [] } = req.body;
-    console.log('[discover] search request:', { suburb, categories });
+    const { suburb, state, categories = [] } = req.body;
+    console.log('[discover] search request:', { suburb, state, categories });
 
     if (!suburb || !suburb.trim()) {
       return res.status(400).json({ error: 'suburb is required' });
@@ -146,7 +147,7 @@ router.post('/', async (req, res) => {
     // Geocode
     let geo = null;
     try {
-      geo = await geocodeSuburb(suburb.trim());
+      geo = await geocodeSuburb(suburb.trim(), state?.trim());
     } catch (err) {
       console.error('[discover] geocode failed:', err.message);
     }
