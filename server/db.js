@@ -36,4 +36,24 @@ db.exec(`
   );
 `);
 
+// Safe migrations — add any columns that may be missing from older DBs
+const migrations = [
+  { table: 'leads', column: 'notes',             type: 'TEXT' },
+  { table: 'leads', column: 'website_status',    type: "TEXT DEFAULT 'unknown'" },
+  { table: 'leads', column: 'lead_score',        type: 'INTEGER DEFAULT 0' },
+  { table: 'leads', column: 'pipeline_status',   type: "TEXT DEFAULT 'found'" },
+  { table: 'leads', column: 'last_contacted_at', type: 'DATETIME' },
+  { table: 'leads', column: 'updated_at',        type: 'DATETIME DEFAULT CURRENT_TIMESTAMP' },
+  { table: 'website_audits', column: 'audited_at', type: 'DATETIME DEFAULT CURRENT_TIMESTAMP' },
+];
+
+for (const { table, column, type } of migrations) {
+  try {
+    db.exec(`ALTER TABLE ${table} ADD COLUMN ${column} ${type}`);
+    console.log(`[db] migrated: added ${table}.${column}`);
+  } catch {
+    // column already exists — expected
+  }
+}
+
 module.exports = db;

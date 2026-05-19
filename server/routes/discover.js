@@ -260,7 +260,7 @@ router.post('/import', async (req, res) => {
       skipped: results.filter(r => r.status === 'skipped').length,
     });
   } catch (err) {
-    console.error('[discover/import] unhandled error:', err);
+    console.error('[discover/import] unhandled error:', err.message, err.stack);
     return res.status(500).json({ error: `Unexpected error: ${err.message}` });
   }
 });
